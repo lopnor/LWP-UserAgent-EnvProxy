@@ -2,7 +2,22 @@ package LWP::UserAgent::EnvProxy;
 
 use strict;
 use warnings;
+use LWP::UserAgent;
 our $VERSION = '0.01';
+
+my $orig = \&LWP::UserAgent::new;
+
+sub new_with_env_proxy {
+    my ($class, %conf) = @_;
+    $conf{env_proxy} = 1;
+    return $orig->($class, %conf);
+};
+
+{
+    no strict 'refs';
+    no warnings 'redefine';
+    *LWP::UserAgent::new = \&new_with_env_proxy;
+}
 
 1;
 __END__
